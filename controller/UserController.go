@@ -2,29 +2,24 @@ package controller
 
 import (
 	"awesomeProject/common"
+	"awesomeProject/model"
+	"awesomeProject/response"
 	"github.com/gin-gonic/gin"
 )
 
-type LoginForm struct {
-	ID       int
-	Username string `form:"username" binding:"required"`
-	Password string `form:"password" binding:"required"`
-}
+
 //查找用户列表
 func UserList(c *gin.Context) {
-	var res []LoginForm
+	var res []model.LoginForm
 	db := common.GetDB()
 	db.Table("db_table").Find(&res)
+	response.Success(c,gin.H{"data": res},"登录成功",200)
 
-	c.JSON(200, gin.H{"data": res, "meta": map[string]interface{}{
-		"msg":  "登录成功",
-		"code": 200,
-	}})
 
 }
 //用于查找最后一个用户的信息
-func selectLastUser() LoginForm{
-	var user LoginForm
+func selectLastUser() model.LoginForm{
+	var user model.LoginForm
 	db := common.GetDB()
 	db.Table("db_table").Last(&user)
 	return user
@@ -39,29 +34,19 @@ func UpdateUser(c *gin.Context) {
 	newPassword :=c.PostForm("newPassword")
 	target := findUserByFiledName(username,oldPassword)
 	if target.Username=="" || target.Password==""{
-		c.JSON(200,gin.H{
-			"data":"",
-			"meta":map[string]interface{}{
-				"msg":"更新失败",
-				"code":401,
-			},
-		})
+		response.Fail(c,gin.H{"data": ""},"更新失败",401)
+
 		return
 	}
 	db := common.GetDB()
 	db.Table("db_table").Model(&target).Update("password", newPassword)
 	target.Password=newPassword
-	c.JSON(200,gin.H{
-		"data":target,
-		"meta":map[string]interface{}{
-			"msg":"更新成功",
-			"code":200,
-		},
-	})
+	response.Success(c,gin.H{"data": target},"更新成功",200)
+
 }
 //顺序是username/password
-func findUserByFiledName(field ...string) LoginForm{
-	var res []LoginForm
+func findUserByFiledName(field ...string) model.LoginForm{
+	var res []model.LoginForm
 	db := common.GetDB()
 	db.Table("db_table").Find(&res)
 	for _,v := range res{
@@ -76,89 +61,66 @@ func findUserByFiledName(field ...string) LoginForm{
 		}
 	}
 	//空值 --> new一个空对象
-	return LoginForm{}
+	return model.LoginForm{}
 }
 
 //删除user ---> 指定用户名
 func DelUser(c *gin.Context){
-	var form LoginForm
+	var form model.LoginForm
 	if c.ShouldBind(&form) == nil {
 		db := common.GetDB()
 		target := findUserByFiledName(form.Username,form.Password)
 		if target.Username=="" || target.Password==""{
-			c.JSON(200,gin.H{
-				"data":nil,
-				"meta":map[string]interface{}{
-					"msg":"删除失败",
-					"code":401,
-				},
-			})
+			response.Fail(c,gin.H{"data": nil},"删除失败",401)
+
 			return
 		}
 		db.Table("db_table").Delete(&target)
-		c.JSON(200,gin.H{
-			"data":target,
-			"meta":map[string]interface{}{
-				"msg":"删除成功",
-				"code":201,
-			},
-		})
+		response.Success(c,gin.H{"data": target},"删除成功",201)
+
 		return
 	}
-	c.JSON(200,gin.H{
-		"data":nil,
-		"meta":map[string]interface{}{
-			"msg":"删除失败",
-			"code":401,
-		},
-	})
+	response.Fail(c,gin.H{"data": nil},"删除失败",401)
+
 }
 //添加//注册user
 func AddUser(c *gin.Context){
-	var user LoginForm
+	var user model.LoginForm
 	if c.ShouldBind(&user)== nil {
 		//最后一个id
 		lastUser := selectLastUser()
 		user.ID = lastUser.ID+1
 		db := common.GetDB()
 		db.Table("db_table").Create(&user)
-		c.JSON(200,gin.H{
-			"data":user,
-			"meta":map[string]interface{}{
-				"msg":"注册成功",
-				"code":200,
-			},
-		})
+		response.Success(c,gin.H{"data": user},"注册成功",200)
+
 		return
 	}
-	c.JSON(200,gin.H{
-		"data":nil,
-		"meta":map[string]interface{}{
-			"msg":"注册失败",
-			"code":401,
-		},
-	})
+	response.Fail(c,gin.H{"data": nil},"注册失败",401)
+
 }
 
 //登录
 func UserLogin(c *gin.Context) {
-	var form LoginForm
-	var res []LoginForm
+	var form model.LoginForm
+	var res []model.LoginForm
 	if c.ShouldBind(&form) == nil {
 		db := common.GetDB()
 		db.Table("db_table").Find(&res)
 		for _, v := range res {
 			if v.Username == form.Username && v.Password == form.Password {
-				c.JSON(200, gin.H{"data": "null", "meta": map[string]interface{}{
-					"msg":  "登录成功",
-					"code": 200,
-				}})
+				token, err := common.GenerateToken(v.ID)
+				if err != nil {
+					response.ServerError(c,nil,"系统异常",5000)
+					return
+				}
+				response.Success(c,gin.H{"data": v,"token":token},"登录成功",200)
+
 				return
 			}
 		}
-		c.JSON(401, gin.H{"data": "null", "meta": map[string]interface{}{
-			"msg":  "登录失败",
-			"code": 404,
-		}})
+		response.Fail(c,gin.H{"data": nil},"登录失败",401)
+
 	}
+	response.ServerError(c,gin.H{"data": nil},"登录失败",5000)
 }

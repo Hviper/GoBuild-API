@@ -1,8 +1,8 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"awesomeProject/controller"
+	"github.com/gin-gonic/gin"
 )
 
 func RouterGroup(router *gin.Engine) *gin.Engine{
@@ -20,11 +20,11 @@ func RouterGroup(router *gin.Engine) *gin.Engine{
 
 	goods := router.Group("/api/private/v1/goods")
 	{
-		goods.POST("/select")
-		goods.POST("/delGoods")
-		goods.POST("/updateGoods")
-		goods.POST("/addGoods")
-		goods.GET("/goods")
+		goods.GET("/select",controller.SelectGoods)
+		goods.POST("/delGoods",controller.DelGoods)
+		goods.POST("/updateGoods",controller.UpdateGoods)
+		goods.POST("/addGoods",controller.AddGoods)
+		goods.GET("/goods",controller.Goods)
 
 	}
 
