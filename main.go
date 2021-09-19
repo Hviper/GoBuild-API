@@ -17,18 +17,14 @@ type User struct{
 	Password string
 }
 func main() {
-	//加载配置文件
+	//加载配置文件初始化
 	InitConfig()
+
 	//MySQL初始化
 	//db :=*common.InitDB()
 	common.InitDB()
 
-	//db :=common.GetDB()
-	//var list []User
-	//db.Table("db_table").Find(&list)
-	//fmt.Println(db,"==========>",list)
-
-
+	//路由初始化
 	r := gin.Default()
 	r = router.RouterGroup(r)
 	err := r.Run(":8080")

@@ -12,7 +12,7 @@ type Claims struct {
 func GenerateToken(id uint) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(300 * time.Second)
-	issuer := "frank"
+	issuer := "井冈山大学电信学院门面网站设计"
 	claims := Claims{
 		ID:       id,
 		StandardClaims: jwt.StandardClaims{

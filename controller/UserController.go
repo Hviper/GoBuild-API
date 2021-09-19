@@ -13,7 +13,7 @@ func UserList(c *gin.Context) {
 	var res []model.LoginForm
 	db := common.GetDB()
 	db.Table("db_table").Find(&res)
-	response.Success(c,gin.H{"data": res},"登录成功",200)
+	response.Success(c,gin.H{"data": res},"登录成功",response.OK)
 
 
 }
@@ -34,14 +34,14 @@ func UpdateUser(c *gin.Context) {
 	newPassword :=c.PostForm("newPassword")
 	target := findUserByFiledName(username,oldPassword)
 	if target.Username=="" || target.Password==""{
-		response.Fail(c,gin.H{"data": ""},"更新失败",401)
+		response.Fail(c,gin.H{"data": ""},"更新失败",response.BADRE_QUEST)
 
 		return
 	}
 	db := common.GetDB()
 	db.Table("db_table").Model(&target).Update("password", newPassword)
 	target.Password=newPassword
-	response.Success(c,gin.H{"data": target},"更新成功",200)
+	response.Success(c,gin.H{"data": target},"更新成功",response.OK)
 
 }
 //顺序是username/password
@@ -71,16 +71,16 @@ func DelUser(c *gin.Context){
 		db := common.GetDB()
 		target := findUserByFiledName(form.Username,form.Password)
 		if target.Username=="" || target.Password==""{
-			response.Fail(c,gin.H{"data": nil},"删除失败",401)
+			response.Fail(c,gin.H{"data": nil},"删除失败",response.BADRE_QUEST)
 
 			return
 		}
 		db.Table("db_table").Delete(&target)
-		response.Success(c,gin.H{"data": target},"删除成功",201)
+		response.Success(c,gin.H{"data": target},"删除成功",response.DELETED)
 
 		return
 	}
-	response.Fail(c,gin.H{"data": nil},"删除失败",401)
+	response.Fail(c,gin.H{"data": nil},"删除失败",response.BADRE_QUEST)
 
 }
 //添加//注册user
@@ -92,11 +92,11 @@ func AddUser(c *gin.Context){
 		user.ID = lastUser.ID+1
 		db := common.GetDB()
 		db.Table("db_table").Create(&user)
-		response.Success(c,gin.H{"data": user},"注册成功",200)
+		response.Success(c,gin.H{"data": user},"注册成功",response.OK)
 
 		return
 	}
-	response.Fail(c,gin.H{"data": nil},"注册失败",401)
+	response.Fail(c,gin.H{"data": nil},"注册失败",response.BADRE_QUEST)
 
 }
 
@@ -111,16 +111,16 @@ func UserLogin(c *gin.Context) {
 			if v.Username == form.Username && v.Password == form.Password {
 				token, err := common.GenerateToken(v.ID)
 				if err != nil {
-					response.ServerError(c,nil,"系统异常",5000)
+					response.ServerError(c,nil,"系统异常",response.ERROR)
 					return
 				}
-				response.Success(c,gin.H{"data": v,"token":token},"登录成功",200)
+				response.Success(c,gin.H{"data": v,"token":token},"登录成功",response.OK)
 
 				return
 			}
 		}
-		response.Fail(c,gin.H{"data": nil},"登录失败",401)
+		response.Fail(c,gin.H{"data": nil},"登录失败",response.BADRE_QUEST)
 
 	}
-	response.ServerError(c,gin.H{"data": nil},"登录失败",5000)
+	response.ServerError(c,gin.H{"data": nil},"登录失败",response.ERROR)
 }

@@ -15,7 +15,7 @@ func SelectGoods(c *gin.Context) {
 	db := common.GetDB()
 
 	db.Table("product").Find(&list)
-	response.Success(c,gin.H{"data": list},"获取成功",200)
+	response.Success(c,gin.H{"data": list},"获取成功",response.OK)
 
 }
 
@@ -38,6 +38,6 @@ func Goods(c *gin.Context) {
 	db := common.GetDB()
 
 	db.Table("product").Find(&list)
-	response.Success(c,gin.H{"data": list},"获取成功",200)
+	response.Success(c,gin.H{"data": list},"获取成功",response.OK)
 
 }
