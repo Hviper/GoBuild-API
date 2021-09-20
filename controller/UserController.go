@@ -91,7 +91,7 @@ func AddUser(c *gin.Context){
 		lastUser := selectLastUser()
 		user.ID = lastUser.ID+1
 		db := common.GetDB()
-		db.Table("db_table").Create(&user)
+		db.Table("db_table").Omit("CreatedAt", "UpdatedAt").Create(&user)
 		response.Success(c,gin.H{"data": user},"注册成功",response.OK)
 
 		return

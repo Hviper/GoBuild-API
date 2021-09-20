@@ -13,6 +13,7 @@ func RouterGroup(router *gin.Engine) *gin.Engine{
 	{
 		user.POST("/login",controller.UserLogin)
 		opt := user.Group("")
+		//用户级别的操作需要使用中间件来控制，token
 		opt.Use(middleware.AdminMiddleware())
 		{
 			opt.POST("/delUser",controller.DelUser)
@@ -32,6 +33,17 @@ func RouterGroup(router *gin.Engine) *gin.Engine{
 		goods.GET("/goods",controller.Goods)
 
 	}
+
+	newslist := router.Group("/api/private/v1/news")
+	{
+		//查询可以指定分页情况
+		newslist.POST("/query",controller.QueryNewsList)
+		newslist.POST("/delNews",controller.DelNews)
+		newslist.POST("/updateNews",controller.UpdateNews)
+		newslist.POST("/addNews",controller.AddNews)
+
+	}
+
 
 	return router
 }
