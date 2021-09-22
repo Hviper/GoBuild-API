@@ -76,7 +76,7 @@ func AddNews(c *gin.Context) {
 	if err == redis.Nil {
 		//fmt.Println("key2 does not exist")，缓存中不存在，需要从数据库中获取
 		db.Table("news_list").Last(&lastNews)
-		////拿到以后存储在redis中，需要将结构体数据转为json字符串
+		////拿到以后并且更新之后才能存储在redis中，需要将结构体数据转为json字符串
 		//str, err := json.Marshal(lastNews)
 		//if err != nil {
 		//	fmt.Println(err)

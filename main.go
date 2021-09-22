@@ -2,6 +2,7 @@ package main
 
 import (
 	"awesomeProject/common"
+	"awesomeProject/middleware"
 	"awesomeProject/router"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -26,6 +27,8 @@ func main() {
 
 	//路由初始化
 	r := gin.Default()
+	//设置跨域允许设置
+	r.Use(middleware.CorsHandler())
 	r = router.RouterGroup(r)
 	err := r.Run(":8080")
 	if err != nil {

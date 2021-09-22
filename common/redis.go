@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/go-redis/redis/v8"
+	"time"
 )
 
 //var ctx = context.Background()
@@ -14,6 +15,12 @@ func InitRedis() *redis.Client{
 		Addr:     "localhost:6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
+		DialTimeout:  10 * time.Second,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
+		PoolSize:     10,
+		PoolTimeout:  30 * time.Second,
+
 	})
 
 	return rdb
