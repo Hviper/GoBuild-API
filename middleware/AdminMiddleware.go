@@ -20,7 +20,9 @@ func AdminMiddleware() gin.HandlerFunc{
 		if tokenString == "" {
 			response.Fail(ctx,gin.H{
 				"data":"拒绝访问",
-			},"Token值为空",400)
+			},"Token值为空",400,map[string]interface{}{
+				"result":"AdminMiddleware Token值为空",
+			})
 			//抛弃请求
 			ctx.Abort()
 			return
@@ -43,7 +45,9 @@ func AdminMiddleware() gin.HandlerFunc{
 		response.Fail(ctx,gin.H{
 
 			"data":"拒绝访问",
-		},"token有误，请携带正确的头字段信息",400)
+		},"token有误，请携带正确的头字段信息",400,map[string]interface{}{
+			"result":"AdminMiddleware token有误",
+		})
 		//抛弃请求
 		ctx.Abort()
 	}

@@ -20,7 +20,9 @@ func CorsHandler() gin.HandlerFunc {
 		if method == "OPTIONS" {
 			response.Success(context, gin.H{
 				"data": "Options Request!",
-			}, "Options Request!", 200)
+			}, "Options Request!", 200,map[string]interface{}{
+				"result":"CorsHandler Options Request!",
+			})
 		}
 
 		//处理请求

@@ -1,0 +1,6 @@
+time="2021-09-23 17:02:49" level=info msg="A walrus appears" fields.msg="map[result:QueryGroup_Dynamics 获取成功]"
+time="2021-09-23 17:02:49" level=info msg="| 200 |     21.2526ms |       127.0.0.1 | GET | /api/private/v1/group_dynamics/query |"
+time="2021-09-23 17:03:21" level=info msg="A walrus appears" fields.msg="map[result:QueryGroup_Dynamics 获取成功]"
+time="2021-09-23 17:03:21" level=info msg="| 200 |     22.7712ms |       127.0.0.1 | GET | /api/private/v1/group_dynamics/query |"
+time="2021-09-23 17:03:26" level=info msg="A walrus appears" fields.msg="map[result:QueryGroup_Dynamics 获取成功]"
+time="2021-09-23 17:03:26" level=info msg="| 200 |     16.6079ms |       127.0.0.1 | GET | /api/private/v1/group_dynamics/query |"

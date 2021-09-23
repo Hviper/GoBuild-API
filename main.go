@@ -28,7 +28,8 @@ func main() {
 
 	//路由初始化
 	r := gin.Default()
-	//设置跨域允许设置
+	//设置跨域允许设置:
+
 	r.Use(middleware.CorsHandler())
 	//日志
 	r.Use(utils.LoggerToFile())
