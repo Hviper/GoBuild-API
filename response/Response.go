@@ -1,7 +1,9 @@
 package response
 
 import (
+	"awesomeProject/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -30,18 +32,24 @@ const(
 
 
 //为ctx.JSON()中的response做统一处理,统一返回两个字段 【key：meta和data】
-func Response(ctx *gin.Context, httpStatus int, code int, data gin.H, msg string) {
+func Response(ctx *gin.Context, httpStatus int, code int, data gin.H, msg string,log map[string]interface{}) {
 	ctx.JSON(httpStatus, gin.H{"meta":map[string]interface{}{
 		"status": code, "msg": msg,
 	}, "data": data})
+
+	//日志统一
+	utils.Logger().WithFields(logrus.Fields{
+		"msg": log,
+	}).Info("A walrus appears")
+
 }
 
-func Success(ctx *gin.Context, data gin.H, msg string,code int) {
-	Response(ctx, http.StatusOK, code, data, msg)
+func Success(ctx *gin.Context, data gin.H, msg string,code int,log map[string]interface{}) {
+	Response(ctx, http.StatusOK, code, data, msg,log)
 }
-func Fail(ctx *gin.Context, data gin.H, msg string,code int) {
-	Response(ctx, http.StatusBadRequest, code, data, msg)
+func Fail(ctx *gin.Context, data gin.H, msg string,code int,log map[string]interface{}) {
+	Response(ctx, http.StatusBadRequest, code, data, msg,log)
 }
-func ServerError(ctx *gin.Context, data gin.H, msg string,code int){
-	Response(ctx, http.StatusBadRequest, code, data, msg)
+func ServerError(ctx *gin.Context, data gin.H, msg string,code int,log map[string]interface{}){
+	Response(ctx, http.StatusBadRequest, code, data, msg,log)
 }

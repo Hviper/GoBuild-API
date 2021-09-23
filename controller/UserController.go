@@ -4,7 +4,9 @@ import (
 	"awesomeProject/common"
 	"awesomeProject/model"
 	"awesomeProject/response"
+	"awesomeProject/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 
@@ -13,7 +15,9 @@ func UserList(c *gin.Context) {
 	var res []model.LoginForm
 	db := common.GetDB()
 	db.Table("db_table").Find(&res)
-	response.Success(c,gin.H{"data": res},"登录成功",response.OK)
+	response.Success(c,gin.H{"data": res},"登录成功",response.OK,map[string]interface{}{
+		"result":"UserList登录成功",
+	})
 
 
 }
@@ -34,14 +38,17 @@ func UpdateUser(c *gin.Context) {
 	newPassword :=c.PostForm("newPassword")
 	target := findUserByFiledName(username,oldPassword)
 	if target.Username=="" || target.Password==""{
-		response.Fail(c,gin.H{"data": ""},"更新失败",response.BADRE_QUEST)
-
+		response.Fail(c,gin.H{"data": ""},"更新失败",response.BADRE_QUEST,map[string]interface{}{
+			"result":"UpdateUser更新失败",
+		})
 		return
 	}
 	db := common.GetDB()
 	db.Table("db_table").Model(&target).Update("password", newPassword)
 	target.Password=newPassword
-	response.Success(c,gin.H{"data": target},"更新成功",response.OK)
+	response.Success(c,gin.H{"data": target},"更新成功",response.OK,map[string]interface{}{
+		"result":"UpdateUser更新成功",
+	})
 
 }
 //顺序是username/password
@@ -71,16 +78,23 @@ func DelUser(c *gin.Context){
 		db := common.GetDB()
 		target := findUserByFiledName(form.Username,form.Password)
 		if target.Username=="" || target.Password==""{
-			response.Fail(c,gin.H{"data": nil},"删除失败",response.BADRE_QUEST)
+			response.Fail(c,gin.H{"data": nil},"删除失败",response.BADRE_QUEST,map[string]interface{}{
+				"result":"DelUser删除失败",
+			})
 
 			return
 		}
 		db.Table("db_table").Delete(&target)
-		response.Success(c,gin.H{"data": target},"删除成功",response.DELETED)
+
+		response.Success(c,gin.H{"data": target},"删除成功",response.DELETED,map[string]interface{}{
+			"result":"DelUser删除成功",
+		})
 
 		return
 	}
-	response.Fail(c,gin.H{"data": nil},"删除失败",response.BADRE_QUEST)
+	response.Fail(c,gin.H{"data": nil},"删除失败",response.BADRE_QUEST,map[string]interface{}{
+		"result":"DelUser删除失败",
+	})
 
 }
 //添加//注册user
@@ -92,11 +106,15 @@ func AddUser(c *gin.Context){
 		user.ID = lastUser.ID+1
 		db := common.GetDB()
 		db.Table("db_table").Omit("CreatedAt", "UpdatedAt").Create(&user)
-		response.Success(c,gin.H{"data": user},"注册成功",response.OK)
+		response.Success(c,gin.H{"data": user},"注册成功",response.OK,map[string]interface{}{
+			"result":"AddUser注册成功",
+		})
 
 		return
 	}
-	response.Fail(c,gin.H{"data": nil},"注册失败",response.BADRE_QUEST)
+	response.Fail(c,gin.H{"data": nil},"注册失败",response.BADRE_QUEST,map[string]interface{}{
+		"result":"AddUser注册失败",
+	})
 
 }
 
@@ -111,16 +129,28 @@ func UserLogin(c *gin.Context) {
 			if v.Username == form.Username && v.Password == form.Password {
 				token, err := common.GenerateToken(v.ID)
 				if err != nil {
-					response.ServerError(c,nil,"系统异常",response.ERROR)
+					//写入日志
+					utils.Logger().WithFields(logrus.Fields{
+						"err": err,
+					}).Info("A walrus appears")
+					response.ServerError(c,nil,"系统异常",response.ERROR,map[string]interface{}{
+						"result":"UserLogin系统异常",
+					})
 					return
 				}
-				response.Success(c,gin.H{"data": v,"token":token},"登录成功",response.OK)
+				response.Success(c,gin.H{"data": v,"token":token},"登录成功",response.OK,map[string]interface{}{
+					"result":"UserLogin登录成功",
+				})
 
 				return
 			}
 		}
-		response.Fail(c,gin.H{"data": nil},"登录失败",response.BADRE_QUEST)
+		response.Fail(c,gin.H{"data": nil},"登录失败",response.BADRE_QUEST,map[string]interface{}{
+			"result":"UserLogin登录失败",
+		})
 
 	}
-	response.ServerError(c,gin.H{"data": nil},"登录失败",response.ERROR)
+	response.ServerError(c,gin.H{"data": nil},"登录失败",response.ERROR,map[string]interface{}{
+		"result":"UserLogin登录失败",
+	})
 }

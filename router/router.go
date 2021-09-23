@@ -24,15 +24,7 @@ func RouterGroup(router *gin.Engine) *gin.Engine{
 
 	}
 
-	goods := router.Group("/api/private/v1/goods")
-	{
-		goods.GET("/select",controller.SelectGoods)
-		goods.POST("/delGoods",controller.DelGoods)
-		goods.POST("/updateGoods",controller.UpdateGoods)
-		goods.POST("/addGoods",controller.AddGoods)
-		goods.GET("/goodsList",controller.Goods)
 
-	}
 
 	newslist := router.Group("/api/private/v1/news")
 	{

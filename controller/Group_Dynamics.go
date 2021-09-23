@@ -13,5 +13,7 @@ func QueryGroup_Dynamics(c *gin.Context){
 	db.Table("group_dynamics").Find(&Gys)
 	response.Success(c,gin.H{
 		"data":Gys,
-	},"获取成功",200)
+	},"获取成功",200,map[string]interface{}{
+		"result":"QueryGroup_Dynamics 获取成功",
+	})
 }

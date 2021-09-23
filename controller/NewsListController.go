@@ -23,7 +23,9 @@ func QueryNewsList(c *gin.Context) {
 	pageindex, err1 := strconv.Atoi(c.PostForm("pageIndex"))
 	pagesize, err2 := strconv.Atoi(c.PostForm("pageSize"))
 	if err1 != nil || err2 != nil {
-		response.Fail(c, gin.H{}, "请携带data字段pageIndex和pageSize", response.BADRE_QUEST)
+		response.Fail(c, gin.H{}, "请携带data字段pageIndex和pageSize", response.BADRE_QUEST,map[string]interface{}{
+			"result":"请携带data字段pageIndex和pageSize",
+		})
 		return
 	}
 	newsList := make([]model.News, 0)
@@ -32,10 +34,14 @@ func QueryNewsList(c *gin.Context) {
 		response.Success(c, gin.H{
 			"data":  newsList,
 			"count": count,
-		}, "获取成功", response.OK)
+		}, "获取成功", response.OK,map[string]interface{}{
+			"result":"QueryNewsList获取成功",
+		})
 		return
 	}
-	response.Fail(c, gin.H{}, "请填写合法的pageIndex和pageSize", response.BADRE_QUEST)
+	response.Fail(c, gin.H{}, "请填写合法的pageIndex和pageSize", response.BADRE_QUEST,map[string]interface{}{
+		"result":"QueryNewsList请填写合法的pageIndex和pageSize",
+	})
 }
 
 //del by ID
@@ -43,7 +49,9 @@ func DelNews(c *gin.Context) {
 	var target model.News
 	id, e := strconv.Atoi(c.PostForm("id"))
 	if e != nil {
-		response.Fail(c, gin.H{}, "填写参数有误", response.BADRE_QUEST)
+		response.Fail(c, gin.H{}, "填写参数有误", response.BADRE_QUEST,map[string]interface{}{
+			"result":"QueryNewsList填写参数有误",
+		})
 		return
 	}
 	target.ID = id
@@ -52,7 +60,9 @@ func DelNews(c *gin.Context) {
 	db.Table("news_list").Delete(&target)
 	response.Success(c, gin.H{
 		"data": target,
-	}, "删除成功", response.OK)
+	}, "删除成功", response.OK,map[string]interface{}{
+		"result":"DelNews删除成功",
+	})
 }
 
 var ctx = context.Background()
@@ -84,7 +94,9 @@ func AddNews(c *gin.Context) {
 		//rdb.Set(ctx, "lastNews", str, time.Second*300)
 
 	} else if err != nil {
-		response.ServerError(c, gin.H{}, "内部解析错误", response.ERROR)
+		response.ServerError(c, gin.H{}, "内部解析错误", response.ERROR,map[string]interface{}{
+			"result":"AddNews内部解析错误",
+		})
 		panic(err)
 		return
 	} else {
@@ -94,7 +106,9 @@ func AddNews(c *gin.Context) {
 		//【反序列化为结构体】
 		err := json.Unmarshal(str, &lastNews)
 		if err != nil {
-			response.ServerError(c, gin.H{}, "本地redis字符串解析有误错误", response.ERROR)
+			response.ServerError(c, gin.H{}, "本地redis字符串解析有误错误", response.ERROR,map[string]interface{}{
+				"result":"AddNews本地redis字符串解析有误错误",
+			})
 		}
 		return
 	}
@@ -106,7 +120,9 @@ func AddNews(c *gin.Context) {
 		//插入成功
 		response.Success(c, gin.H{
 			"res": newObj,
-		}, "添加成功", response.OK)
+		}, "添加成功", response.OK,map[string]interface{}{
+			"result":"AddNews添加成功",
+		})
 
 		//redis中的字段 “lastNews” 最后一条数据需要更新为当前插入的最新数据，
 		//需要将结构体数据转为json字符串
@@ -118,6 +134,8 @@ func AddNews(c *gin.Context) {
 	}else{
 		response.ServerError(c, gin.H{
 			"res": "失败",
-		}, "添加失败", response.ERROR)
+		}, "添加失败", response.ERROR,map[string]interface{}{
+			"result":"AddNews添加失败",
+		})
 	}
 }
