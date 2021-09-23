@@ -4,6 +4,7 @@ import (
 	"awesomeProject/common"
 	"awesomeProject/middleware"
 	"awesomeProject/router"
+	"awesomeProject/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	_ "gorm.io/gorm"
@@ -29,6 +30,9 @@ func main() {
 	r := gin.Default()
 	//设置跨域允许设置
 	r.Use(middleware.CorsHandler())
+	//日志
+	r.Use(utils.LoggerToFile())
+
 	r = router.RouterGroup(r)
 	err := r.Run(":8080")
 	if err != nil {

@@ -30,7 +30,7 @@ func RouterGroup(router *gin.Engine) *gin.Engine{
 		goods.POST("/delGoods",controller.DelGoods)
 		goods.POST("/updateGoods",controller.UpdateGoods)
 		goods.POST("/addGoods",controller.AddGoods)
-		goods.GET("/goods",controller.Goods)
+		goods.GET("/goodsList",controller.Goods)
 
 	}
 
@@ -44,6 +44,11 @@ func RouterGroup(router *gin.Engine) *gin.Engine{
 
 	}
 
+	group_dynamics := router.Group("/api/private/v1/group_dynamics")
+	{
+		//try test the interface
+		group_dynamics.GET("/query",controller.QueryGroup_Dynamics)
+	}
 
 	return router
 }

@@ -32,7 +32,7 @@ const(
 //为ctx.JSON()中的response做统一处理,统一返回两个字段 【key：meta和data】
 func Response(ctx *gin.Context, httpStatus int, code int, data gin.H, msg string) {
 	ctx.JSON(httpStatus, gin.H{"meta":map[string]interface{}{
-		"code": code, "msg": msg,
+		"status": code, "msg": msg,
 	}, "data": data})
 }
 
